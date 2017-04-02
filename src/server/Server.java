@@ -4,21 +4,9 @@ import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
 import com.db4o.query.Predicate;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,10 +56,25 @@ public class Server {
 
     private static ObjectContainer db;
 
+    private static final String INSERTAT = "INSERTAT";
+    private static final String BORRAT = "INSERTAT";
+    private static final String ACTUALITZAT = "ACTUALITZAT";
+    private static final String NOEXISTEIX = "NO EXISTEIX";
+    private static final String JAEXISTEIX = "JA EXISTEIX";
+
+    private static final String CONTROLRETORNAT = "El SERVER retorna el control al CLIENT";
 
     private void listen() {
         ServerSocket serverSocket;
         Socket clientSocket;
+
+        File dbDir = new File(DBDIR);
+
+        if (!dbDir.exists()) {
+            dbDir.mkdirs();
+        }
+
+        db = Db4oEmbedded.openFile(DB);
 
         try {
             //Es crea un ServerSocket que atendrà el port nº PORT a l'espera de
@@ -92,7 +95,8 @@ public class Server {
             }
 
             //Tanquem el sòcol principal
-            if (serverSocket != null && !serverSocket.isClosed()) {
+            if (!serverSocket.isClosed()) {
+                db.close();
                 serverSocket.close();
             }
         } catch (IOException ex) {
@@ -166,10 +170,10 @@ public class Server {
                         result = dbInsert(idMsg, msg);
 
                         if (result) {
-                            out.println(RESULT + SP + MSG + SP + "INSERTAT" + SP + MSGFI);
+                            out.println(RESULT + SP + MSG + SP + INSERTAT + SP + MSGFI);
                             out.flush();
                         } else {
-                            out.println(RESULT + SP + MSG + SP + "JA EXISTEIX" + SP + MSGFI);
+                            out.println(RESULT + SP + MSG + SP + JAEXISTEIX + SP + MSGFI);
                             out.flush();
                         }
 
@@ -188,10 +192,10 @@ public class Server {
                         result = dbUpdate(idMsg, msg);
 
                         if (result) {
-                            out.println(RESULT + SP + MSG + SP + "ACTUALITZAT" + SP + MSGFI);
+                            out.println(RESULT + SP + MSG + SP + ACTUALITZAT + SP + MSGFI);
                             out.flush();
                         } else {
-                            out.println(RESULT + SP + MSG + SP + "NO EXISTEIX" + SP + MSGFI);
+                            out.println(RESULT + SP + MSG + SP + NOEXISTEIX + SP + MSGFI);
                             out.flush();
                         }
 
@@ -208,10 +212,10 @@ public class Server {
                         result = dbDelete(idMsg);
 
                         if (result) {
-                            out.println(RESULT + SP + MSG + SP + "BORRAT" + SP + MSGFI);
+                            out.println(RESULT + SP + MSG + SP + BORRAT + SP + MSGFI);
                             out.flush();
                         } else {
-                            out.println(RESULT + SP + MSG + SP + "NO EXISTEIX" + SP + MSGFI);
+                            out.println(RESULT + SP + MSG + SP + NOEXISTEIX + SP + MSGFI);
                             out.flush();
                         }
 
@@ -231,7 +235,7 @@ public class Server {
                             out.println(RESULT + SP + MSG + SP + resultSearch + SP + MSGFI);
                             out.flush();
                         } else {
-                            out.println(RESULT + SP + MSG + SP + "NO TROBAT" + SP + MSGFI);
+                            out.println(RESULT + SP + MSG + SP + NOEXISTEIX + SP + MSGFI);
                             out.flush();
                         }
 
@@ -245,7 +249,7 @@ public class Server {
                             out.println(RESULT + SP + MSG + SP + resultSearch + SP + MSGFI);
                             out.flush();
                         } else {
-                            out.println(RESULT + SP + MSG + SP + "NO TROBAT" + SP + MSGFI);
+                            out.println(RESULT + SP + MSG + SP + NOEXISTEIX + SP + MSGFI);
                             out.flush();
                         }
 
@@ -254,8 +258,9 @@ public class Server {
                 }
 
             } else {
-                out.println(RETORNCTRL + SP + MSG + SP + "El SERVER retorna el control de les comunicacions al CLIENT" + SP + MSGFI);
+                out.println(RETORNCTRL + SP + MSG + SP + CONTROLRETORNAT + SP + MSGFI);
                 out.flush();
+
             }
 
         } catch (Exception e) {
@@ -400,14 +405,6 @@ public class Server {
 
     public static void main(String[] args) {
         Server server = new Server();
-
-        File dbDir = new File(DBDIR);
-
-        if (!dbDir.exists()) {
-            dbDir.mkdirs();
-        }
-
-        db = Db4oEmbedded.openFile(DB);
 
         server.listen();
     }

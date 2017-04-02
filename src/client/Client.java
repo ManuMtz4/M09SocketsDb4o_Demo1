@@ -1,15 +1,9 @@
 package client;
 
-import sun.misc.BASE64Decoder;
-
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -49,6 +43,8 @@ public class Client {
     private static final String MSG = "MSG";
     private static final String MSGFI = "MSGFI";
 
+    private static final int PORT = 9090;
+    private static final String ADDRESS = "127.0.0.1";
 
     private boolean noTancar = true;
 
@@ -339,7 +335,7 @@ public class Client {
 
     public static void main(String[] args) {
         Client cliente = new Client();
-        cliente.connect("127.0.0.1", 9090);
+        cliente.connect(ADDRESS, PORT);
     }
 
 }

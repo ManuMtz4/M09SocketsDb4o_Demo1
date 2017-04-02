@@ -75,8 +75,10 @@ public class Client {
                     }
                 }
 
-                for (int i = 0; i < LS_SIZE; i++) {
-                    missatge.deleteCharAt(missatge.length() - 1);
+                if (missatge.toString().length() > LS_SIZE) {
+                    for (int i = 0; i < LS_SIZE; i++) {
+                        missatge.deleteCharAt(missatge.length() - 1);
+                    }
                 }
 
                 serverData = missatge.toString();
@@ -172,8 +174,10 @@ public class Client {
                         msg.append(text).append(LS);
                     }
 
-                    for (int i = 0; i < LS_SIZE; i++) {
-                        msg.deleteCharAt(msg.length() - 1);
+                    if (msg.toString().length() > LS_SIZE) {
+                        for (int i = 0; i < LS_SIZE; i++) {
+                            msg.deleteCharAt(msg.length() - 1);
+                        }
                     }
 
                     StringTokenizer msgTokenizer = new StringTokenizer(msg.toString(), LS);
@@ -227,8 +231,10 @@ public class Client {
                         msg.append(text).append(LS);
                     }
 
-                    for (int i = 0; i < LS_SIZE; i++) {
-                        msg.deleteCharAt(msg.length() - 1);
+                    if (msg.toString().length() > LS_SIZE) {
+                        for (int i = 0; i < LS_SIZE; i++) {
+                            msg.deleteCharAt(msg.length() - 1);
+                        }
                     }
 
                     StringTokenizer msgTokenizer = new StringTokenizer(msg.toString(), LS);

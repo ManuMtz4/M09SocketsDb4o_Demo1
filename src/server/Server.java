@@ -124,8 +124,10 @@ public class Server {
                     }
                 }
 
-                for (int i = 0; i < LS_SIZE; i++) {
-                    missatge.deleteCharAt(missatge.length() - 1);
+                if (missatge.toString().length() > LS_SIZE) {
+                    for (int i = 0; i < LS_SIZE; i++) {
+                        missatge.deleteCharAt(missatge.length() - 1);
+                    }
                 }
 
                 clientMessage = missatge.toString();
@@ -363,8 +365,10 @@ public class Server {
                 msgList.append(msg).append(LS);
             }
 
-            for (int i = 0; i < LS_SIZE; i++) {
-                msgList.deleteCharAt(msgList.length() - 1);
+            if (msgList.toString().length() > LS_SIZE) {
+                for (int i = 0; i < LS_SIZE; i++) {
+                    msgList.deleteCharAt(msgList.length() - 1);
+                }
             }
 
             return msgList.toString();
